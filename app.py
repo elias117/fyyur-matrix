@@ -46,7 +46,6 @@ class Venue(db.Model):
     website_link = db.Column(db.String(120))
     looking_for_talent = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(250))
-    genres = db.relationship(lambda: Genre)
 
 
 class Artist(db.Model):
@@ -60,18 +59,8 @@ class Artist(db.Model):
     genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-    genres = db.relationship(lambda: Genre)
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
-
-
-class Genre(db.Model):
-    __tablename__ = "Genre"
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    venue_id = db.Column(db.Integer, db.ForeignKey(Venue.id))
-    artist_id = db.Column(db.Integer, db.ForeignKey(Artist.id))
 
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
