@@ -46,6 +46,7 @@ class Venue(db.Model):
     website_link = db.Column(db.String(120))
     looking_for_talent = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(250))
+    genres = db.Column(db.String(120))
 
 
 class Artist(db.Model):
