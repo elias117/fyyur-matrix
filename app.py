@@ -121,35 +121,52 @@ def venues():
     # TODO: replace with real venues data.
     # num_upcoming_shows should be aggregated based on number of upcoming
     # shows per venue.
-    data = [
-        {
-            "city": "San Francisco",
-            "state": "CA",
-            "venues": [
-                {
-                    "id": 1,
-                    "name": "The Musical Hop",
-                    "num_upcoming_shows": 0,
-                },
-                {
-                    "id": 3,
-                    "name": "Park Square Live Music & Coffee",
-                    "num_upcoming_shows": 1,
-                },
-            ],
-        },
-        {
-            "city": "New York",
-            "state": "NY",
-            "venues": [
-                {
-                    "id": 2,
-                    "name": "The Dueling Pianos Bar",
-                    "num_upcoming_shows": 0,
-                }
-            ],
-        },
-    ]
+    # data = [
+    #     {
+    #         "city": "San Francisco",
+    #         "state": "CA",
+    #         "venues": [
+    #             {
+    #                 "id": 1,
+    #                 "name": "The Musical Hop",
+    #                 "num_upcoming_shows": 0,
+    #             },
+    #             {
+    #                 "id": 3,
+    #                 "name": "Park Square Live Music & Coffee",
+    #                 "num_upcoming_shows": 1,
+    #             },
+    #         ],
+    #     },
+    #     {
+    #         "city": "New York",
+    #         "state": "NY",
+    #         "venues": [
+    #             {
+    #                 "id": 2,
+    #                 "name": "The Dueling Pianos Bar",
+    #                 "num_upcoming_shows": 0,
+    #             }
+    #         ],
+    #     },
+    # ]
+    cities_and_states = Venue.query.distinct(Venue.city, Venue.state).all()
+    data = []
+    for cs in cities_and_states:
+        venues_in_city_and_state = Venue.query.filter(
+            Venue.city == cs.city, Venue.state == cs.state).all()
+        formatted_venues = [
+            {
+                "id": venue.id,
+                "name": venue.name,
+                "num_upcoming_shows": Show.query.filter(
+                    Show.venue_id == venue.id,
+                    Show.datetime > datetime.datetime.now()).count()} for venue in venues_in_city_and_state]
+        data.append({
+            "city": cs.city,
+            "state": cs.state,
+            "venues": formatted_venues
+        })
     return render_template("pages/venues.html", areas=data)
 
 
