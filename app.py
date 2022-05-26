@@ -5,7 +5,7 @@
 import json
 import dateutil.parser
 import babel
-from flask import Flask, render_template, request, Response, flash, redirect, url_for
+from flask import Flask, render_template, request, Response, flash, redirect, url_for, abort
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 import logging
@@ -333,20 +333,24 @@ def delete_venue(venue_id):
 @app.route("/artists")
 def artists():
     # TODO: replace with real data returned from querying the database
-    data = [
-        {
-            "id": 4,
-            "name": "Guns N Petals",
-        },
-        {
-            "id": 5,
-            "name": "Matt Quevedo",
-        },
-        {
-            "id": 6,
-            "name": "The Wild Sax Band",
-        },
-    ]
+    # data = [
+    #     {
+    #         "id": 4,
+    #         "name": "Guns N Petals",
+    #     },
+    #     {
+    #         "id": 5,
+    #         "name": "Matt Quevedo",
+    #     },
+    #     {
+    #         "id": 6,
+    #         "name": "The Wild Sax Band",
+    #     },
+    # ]
+    artists = Artist.query.order_by(Artist.id).all()
+    if len(artists) == 0:
+        abort(404)
+    data = [{"id": artist.id, "name": artist.name} for artist in artists]
     return render_template("pages/artists.html", artists=data)
 
 
