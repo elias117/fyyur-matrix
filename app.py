@@ -331,7 +331,7 @@ def create_venue_submission():
             flash(
                 "An error occurred. Venue {} could not be listed".format(
                     form.name.data))
-    return render_template('forms/new_artist.html', form=form)
+    return render_template('forms/new_venue.html', form=form)
 
 
 @app.route("/venues/<venue_id>", methods=["DELETE"])
