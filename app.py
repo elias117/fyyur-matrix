@@ -67,6 +67,18 @@ class Venue(db.Model):
             "image_link": self.image_link
         }
 
+    def find_num_upcoming_shows(self):
+        numShows = Show.query.filter(
+            Show.venue_id == self.id,
+            Show.datetime > datetime.datetime.now()).count()
+        return numShows
+
+    def find_num_past_shows(self):
+        numShows = Show.query.filter(
+            Show.venue_id == self.id,
+            Show.datetime < datetime.datetime.now()).count()
+        return numShows
+
 
 class Artist(db.Model):
     __tablename__ = "Artist"
@@ -86,6 +98,18 @@ class Artist(db.Model):
     looking_for_venue = db.Column(db.Boolean())
     seeking_description = db.Column(db.String(120))
     shows = db.relationship('Show', backref='artist', lazy=True)
+
+    def find_num_upcoming_shows(self):
+        numShows = Show.query.filter(
+            Show.artist_id == self.id,
+            Show.datetime > datetime.datetime.now()).count()
+        return numShows
+
+    def find_num_past_shows(self):
+        numShows = Show.query.filter(
+            Show.artist_id == self.id,
+            Show.datetime < datetime.datetime.now()).count()
+        return numShows
 
 
 class Show(db.Model):
@@ -173,13 +197,10 @@ def search_venues():
             "%{}%".format(search_term))).all()
     data = []
     for venue in found_results:
-        numOfShows = Show.query.filter(
-            Show.venue_id == venue.id,
-            Show.datetime > datetime.datetime.now()).count()
         data.append({
             "id": venue.id,
             "name": venue.name,
-            "num_upcoming_shows": numOfShows
+            "num_upcoming_shows": venue.find_num_upcoming_shows()
         })
     count = len(found_results)
     response = {
@@ -313,20 +334,25 @@ def search_artists():
     # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
     # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
     # search for "band" should return "The Wild Sax Band".
+
+    search_term = request.form.get("search_term", "")
+    if search_term is "":
+        abort(404)
+
+    search_results = Artist.query.filter(
+        Artist.name.ilike("%{}%".format(search_term))).all()
+
+    count = len(search_results)
+    data = [{"id": artist.id, "name": artist.name, "num_upcoming_shows":
+             artist.find_num_upcoming_shows()} for artist in search_results]
     response = {
-        "count": 1,
-        "data": [
-            {
-                "id": 4,
-                "name": "Guns N Petals",
-                "num_upcoming_shows": 0,
-            }
-        ],
+        "count": count,
+        "data": data
     }
     return render_template(
         "pages/search_artists.html",
         results=response,
-        search_term=request.form.get("search_term", ""),
+        search_term=search_term,
     )
 
 
