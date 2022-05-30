@@ -203,18 +203,18 @@ def show_venue(venue_id):
     data = found_venue.format()
     past_shows = Show.query.filter(
         Show.venue_id == found_venue.id,
-        Show.datetime < datetime.datetime.now())
+        Show.datetime < datetime.datetime.now()).all()
     upcoming_shows = Show.query.filter(
         Show.venue_id == found_venue.id,
-        Show.datetime > datetime.datetime.now())
+        Show.datetime > datetime.datetime.now()).all()
     format_past_shows = [{"artist_id": show.artist.id,
                           "artist_name": show.artist.name,
                           "artist_image_link": show.artist.image_link,
-                          "start_time": show.datetime} for show in past_shows]
+                          "start_time": str(show.datetime)} for show in past_shows]
     format_upcoming_shows = [{"artist_id": show.artist.id,
                               "artist_name": show.artist.name,
                               "artist_image_link": show.artist.image_link,
-                              "start_time": show.datetime} for show in upcoming_shows]
+                              "start_time": str(show.datetime)} for show in upcoming_shows]
     num_of_upcoming_shows = len(upcoming_shows)
     num_of_past_shows = len(past_shows)
 
