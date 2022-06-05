@@ -6,7 +6,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Enable debug mode.
 DEBUG = True
-
+TEMPLATES_AUTO_RELOAD = True
 # Connect to the database
 
 

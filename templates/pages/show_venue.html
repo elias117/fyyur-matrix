@@ -75,7 +75,36 @@
 	</div>
 </section>
 
+<style>
+	.hidden {
+		display: none;
+	}
+</style>
 <a href="/venues/{{ venue.id }}/edit"><button class="btn btn-primary btn-lg">Edit</button></a>
+<button id="deleteButton" class="btn btn-primary btn-lg">Delete</button>
+<h1 id="error" class="hidden">Unable to delete {{venue.id}}</h1>
+
+<script>
+	document.getElementById("deleteButton").onclick = function(e) {
+		e.preventDefault();
+		x = {{ venue.id|safe }}
+		fetch(`/venues/${x}`, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+
+		})
+		.then(function(response)
+		{
+			window.location.href = "/";
+		})
+		.catch(function(response)
+		{
+			document.getElementById('error').className = '';
+		})
+	}
+</script>
 
 {% endblock %}
 
